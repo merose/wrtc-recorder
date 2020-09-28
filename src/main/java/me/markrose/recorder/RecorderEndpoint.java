@@ -14,30 +14,30 @@ import javax.websocket.Session;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @ServerEndpoint(value="/upload/{filename}", decoders = BlobMessageDecoder.class, configurator = Configurator.class)
 public class RecorderEndpoint {
 
-	private OutputStream out;
+	private static final Logger logger = LoggerFactory.getLogger(RecorderEndpoint.class);
 
-	private File getRecordingDir() {
-		String path = ContextListener.getServletContext().getRealPath("/recordings");
-		return new File(path);
-	}
+	private OutputStream out;
 
 	@OnOpen
 	public void onOpen(Session session, @PathParam("filename") String filename,
 			EndpointConfig config) throws IOException, EncodeException {
 
-		System.out.println("onOpen");
-		File recordingDir = getRecordingDir();
-		File f = new File(getRecordingDir(), filename);
+		logger.info("onOpen");
+		File recordingDir = ContextListener.getRecordingDir();
+		File f = new File(recordingDir, filename);
 		recordingDir.mkdirs();
 		out = new FileOutputStream(f);
 	}
 
 	@OnClose
 	public void onClose(Session session) throws IOException, EncodeException {
-		System.out.println("onClose");
+		logger.info("onClose");
 		if (out != null) {
 			out.close();
 		}
@@ -45,7 +45,7 @@ public class RecorderEndpoint {
 
 	@OnMessage
 	public void onMessage(Session session, BlobMessage message) throws IOException, EncodeException {
-		System.out.println("onSend - data length is " + message.getData().length);
+		logger.info("onSend - data length is " + message.getData().length);
 		out.write(message.getData());
 	}
 

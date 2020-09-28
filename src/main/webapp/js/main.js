@@ -16,6 +16,10 @@ recordElement.onclick = start
 stopElement.onclick = stop
 playElement.onclick = play
 
+document.onkeydown = function(event) {
+	console.log('key code=' + event.keyCode + ' key="' + event.key + '"')
+}
+
 
 const constraints = {
 	audio: {
@@ -53,7 +57,7 @@ function send() {
 
 function start() {
 	mediaRecorder.ondataavailable = onChunk
-	mediaRecorder.start(1000)
+	mediaRecorder.start(25)
 	console.log('Started recording')
 }
 

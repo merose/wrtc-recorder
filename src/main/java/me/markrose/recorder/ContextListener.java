@@ -1,5 +1,7 @@
 package me.markrose.recorder;
 
+import java.io.File;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -21,6 +23,11 @@ public class ContextListener implements ServletContextListener {
 
 	private static synchronized void setServletContext(ServletContext context) {
 		ContextListener.context = context;
+	}
+
+	public static File getRecordingDir() {
+		String path = ContextListener.getServletContext().getRealPath("/recordings");
+		return new File(path);
 	}
 
 	@Override
